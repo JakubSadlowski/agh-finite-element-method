@@ -1,31 +1,32 @@
 package org.example;
 
 public class Element {
-    private final int[] ID = new int[4];
-    private static int elementCounter = 1;
+    private final int[] elements = new int[4];
+    private final int elementID;
 
-    public Element(int[] ID) {
+    public Element(int[] ID, int elementID) {
         if (ID.length == 4) {
-            System.arraycopy(ID, 0, this.ID, 0, ID.length);
+            System.arraycopy(ID, 0, this.elements, 0, ID.length);
+            this.elementID = elementID;
         } else {
-            throw new IllegalArgumentException("ID array must have exactly 4 elements.");
+            throw new IllegalArgumentException("Elements array must have exactly 4 elements.");
         }
     }
 
-    public int[] getID() {
-        return ID;
+    public int[] getElements() {
+        return elements;
     }
 
-    public void setID(int[] ID) {
-        if (ID.length == 4) {
-            System.arraycopy(ID, 0, this.ID, 0, ID.length);
+    public void setElements(int[] elements) {
+        if (elements.length == 4) {
+            System.arraycopy(elements, 0, this.elements, 0, elements.length);
         } else {
-            throw new IllegalArgumentException("ID array must have exactly 4 elements.");
+            throw new IllegalArgumentException("Elements array must have exactly 4 elements.");
         }
     }
 
     @Override
     public String toString() {
-        return "Element " +  elementCounter++ + " {" + "ID=" + java.util.Arrays.toString(ID) + "}";
+        return "Element " +  elementID + " {" + "ID=" + java.util.Arrays.toString(elements) + "}";
     }
 }

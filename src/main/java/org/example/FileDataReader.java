@@ -92,10 +92,11 @@ public class FileDataReader {
                 }
 
                 if (readingNodes && !line.startsWith("*Node")) {
+                    int nodeID = Integer.parseInt(tokens[1]);
                     double x = Double.parseDouble(tokens[2]);
                     double y = Double.parseDouble(tokens[3]);
                     if (nodes != null){
-                        nodes[nodeIndex] = new Node(x, y);
+                        nodes[nodeIndex] = new Node(x, y, nodeID);
                         nodeIndex++;
                     } else {
                         throw new NullPointerException("Nodes array is not initialized.");
@@ -103,13 +104,14 @@ public class FileDataReader {
                 }
 
                 if (readingElements && !line.startsWith("*Element")) {
+                    int elementID = Integer.parseInt(tokens[1]);
                     int[] ids = new int[4];
                     ids[0] = Integer.parseInt(tokens[2]);
                     ids[1] = Integer.parseInt(tokens[3]);
                     ids[2] = Integer.parseInt(tokens[4]);
                     ids[3] = Integer.parseInt(tokens[5]);
                     if (elements != null){
-                        elements[elementIndex] = new Element(ids);
+                        elements[elementIndex] = new Element(ids, elementID);
                         elementIndex++;
                     } else {
                         throw new NullPointerException("Elements array is not initialized.");

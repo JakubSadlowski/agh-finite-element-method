@@ -3,11 +3,12 @@ package org.example;
 public class Node {
     private double x;
     private double y;
-    private static int nodeCounter = 1;
+    private final int nodeID;
 
-    public Node(double x, double y) {
+    public Node(double x, double y, int nodeID) {
         this.x = x;
         this.y = y;
+        this.nodeID = nodeID;
     }
 
     public double getX() {
@@ -28,6 +29,6 @@ public class Node {
 
     @Override
     public String toString() {
-        return "Node " +  nodeCounter++ + " {" + "x=" + x + ", y=" + y + "}";
+        return "Node " +  nodeID + " {" + "x=" + x + ", y=" + y + "}";
     }
 }
