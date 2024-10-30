@@ -36,6 +36,6 @@ public class Main {
         Jacobian jacobian = new Jacobian(4);
 
         jacobian.calculateJacobians(nodes, dNdKsi, dNdEta);
-        jacobian.printJacobian();
+        jacobian.printJacobians();
     }
 }
