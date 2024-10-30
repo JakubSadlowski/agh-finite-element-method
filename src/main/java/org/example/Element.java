@@ -3,6 +3,7 @@ package org.example;
 public class Element {
     private final int[] elements = new int[4];
     private final int elementID;
+    private Jacobian[] jacobin;
 
     public Element(int[] ID, int elementID) {
         if (ID.length == 4) {
