@@ -1,8 +1,8 @@
 package org.example;
 
 public class ElementUni {
-    private double ksi = 0.577;
-    private double eta = 0.577;
+    private double ksi = 1.0 / Math.sqrt(3);
+    private double eta = 1.0 / Math.sqrt(3);
     private final double[][] dNdKsi;
     private final double[][] dNdEta;
     private final double[] shapeFunctions;
@@ -13,26 +13,33 @@ public class ElementUni {
         dNdKsi = new double[npc][4];
         dNdEta = new double[npc][4];
 
-        // Calculate shape functions
-        shapeFunctions[0] = 0.25 * (1 - ksi) * (1 - eta);
-        shapeFunctions[1] = 0.25 * (1 + ksi) * (1 - eta);
-        shapeFunctions[2] = 0.25 * (1 + ksi) * (1 + eta);
-        shapeFunctions[3] = 0.25 * (1 - ksi) * (1 + eta);
+        // Define ksi and eta for each integration point
+        double[][] ksiEtaValues = {
+                {-ksi, -eta},  // pc1
+                { ksi, -eta},  // pc2
+                { ksi,  eta},  // pc3
+                {-ksi,  eta}   // pc4
+        };
 
-        // Calculate dNdKsi
-        for (int i = 0; i < npc; i++) {
-            dNdKsi[i][0] = -0.25 * (1 - eta);
-            dNdKsi[i][1] = 0.25 * (1 - eta);
-            dNdKsi[i][2] = 0.25 * (1 + eta);
-            dNdKsi[i][3] = -0.25 * (1 + eta);
-        }
+        // Calculate shape functions and derivatives for each point
+        for (int p = 0; p < npc; p++) {
+            double ksiP = ksiEtaValues[p][0];
+            double etaP = ksiEtaValues[p][1];
 
-        // Calculate dNdEta
-        for (int i = 0; i < npc; i++) {
-            dNdEta[i][0] = -0.25 * (1 - ksi);
-            dNdEta[i][1] = -0.25 * (1 + ksi);
-            dNdEta[i][2] = 0.25 * (1 + ksi);
-            dNdEta[i][3] = 0.25 * (1 - ksi);
+            shapeFunctions[0] = 0.25 * (1 - ksiP) * (1 - etaP);
+            shapeFunctions[1] = 0.25 * (1 + ksiP) * (1 - etaP);
+            shapeFunctions[2] = 0.25 * (1 + ksiP) * (1 + etaP);
+            shapeFunctions[3] = 0.25 * (1 - ksiP) * (1 + etaP);
+
+            dNdKsi[p][0] = -0.25 * (1 - etaP);
+            dNdKsi[p][1] = 0.25 * (1 - etaP);
+            dNdKsi[p][2] = 0.25 * (1 + etaP);
+            dNdKsi[p][3] = -0.25 * (1 + etaP);
+
+            dNdEta[p][0] = -0.25 * (1 - ksiP);
+            dNdEta[p][1] = -0.25 * (1 + ksiP);
+            dNdEta[p][2] = 0.25 * (1 + ksiP);
+            dNdEta[p][3] = 0.25 * (1 - ksiP);
         }
     }
 
@@ -48,4 +55,30 @@ public class ElementUni {
         return dNdKsi;
     }
 
+    public void printResults() {
+        System.out.println("------------------------------------------------------------");
+        System.out.println("| pc | dN1/dKsi   | dN2/dKsi   | dN3/dKsi   | dN4/dKsi   |");
+        System.out.println("------------------------------------------------------------");
+
+        for (int p = 0; p < npc; p++) {
+            System.out.print("| " + (p + 1) + "  ");
+            for (int j = 0; j < dNdKsi[0].length; j++) {
+                System.out.printf("| %-8.5f ", dNdKsi[p][j]);
+            }
+            System.out.println("|");
+        }
+
+        System.out.println("------------------------------------------------------------");
+        System.out.println("| pc | dN1/dEta   | dN2/dEta   | dN3/dEta   | dN4/dEta   |");
+        System.out.println("------------------------------------------------------------");
+
+        for (int p = 0; p < npc; p++) {
+            System.out.print("| " + (p + 1) + "  ");
+            for (int j = 0; j < dNdEta[0].length; j++) {
+                System.out.printf("| %-8.5f ", dNdEta[p][j]);
+            }
+            System.out.println("|");
+        }
+        System.out.println("------------------------------------------------------------");
+    }
 }

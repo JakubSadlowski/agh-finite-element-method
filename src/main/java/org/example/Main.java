@@ -32,10 +32,14 @@ public class Main {
         ElementUni elementUni = new ElementUni();
         double[][] dNdKsi = elementUni.getdNdKsi();
         double[][] dNdEta = elementUni.getdNdEta();
+        //elementUni.printResults();
 
         Jacobian jacobian = new Jacobian(4);
 
         jacobian.calculateJacobians(nodes, dNdKsi, dNdEta);
-        jacobian.printJacobians();
+        //jacobian.printJacobians();
+
+        MatrixH matrixH = new MatrixH(jacobian.getJ1(), dNdKsi, dNdEta, 4);
+        matrixH.printResults();
     }
 }

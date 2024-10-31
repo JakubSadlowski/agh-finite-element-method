@@ -17,12 +17,16 @@ public class Jacobian {
         return J[pointIndex];
     }
 
-    public double[][] getJ1(int pointIndex) {
-        return J1[pointIndex];
+    public double[][][] getJ1() {
+        return J1;
     }
 
-    public double getDetJ(int pointIndex) {
-        return detJ[pointIndex];
+    public double[] getDetJ() {
+        return detJ;
+    }
+
+    public int getNpc() {
+        return npc;
     }
 
     public void calculateJacobians(Node[] nodes, double[][] dNdKsi, double[][] dNdEta) {
