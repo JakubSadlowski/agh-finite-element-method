@@ -33,7 +33,6 @@ public class GaussQuadratureData {
         double[][] nodes2D = new double[points * points][2]; // 2D array for nodes
         int index = 0;
 
-        // Generate 2D grid of nodes
         for (double ksi : nodes1D) {
             for (double eta : nodes1D) {
                 nodes2D[index][0] = ksi; // Ksi direction
@@ -47,9 +46,8 @@ public class GaussQuadratureData {
     public static double[][] get2DWeights(int points) {
         GaussQuadratureData gaussData = new GaussQuadratureData(points);
         double[] weights1D = gaussData.getWeights();
-        double[][] weights2D = new double[points][points]; // 2D array for weights
+        double[][] weights2D = new double[points][points];
 
-        // Multiply 1D weights to create 2D weights
         for (int i = 0; i < points; i++) {
             for (int j = 0; j < points; j++) {
                 weights2D[i][j] = weights1D[i] * weights1D[j];

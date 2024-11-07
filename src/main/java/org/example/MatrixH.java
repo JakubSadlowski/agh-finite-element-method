@@ -16,7 +16,7 @@ public class MatrixH {
     public MatrixH(double[][][] J1, double[] detJ, double[][] dNdKsi, double[][] dNdEta, int integrationPoints) {
         this.J1 = J1;
         this.detJ = detJ;
-        this.weights = GaussQuadratureData.get2DWeights(integrationPoints); // Ensure this provides a 2D array
+        this.weights = GaussQuadratureData.get2DWeights(integrationPoints);
         this.dNdKsi = dNdKsi;
         this.dNdEta = dNdEta;
         this.npc = integrationPoints * integrationPoints;
@@ -75,7 +75,7 @@ public class MatrixH {
 
     public void printMatrixHpc() {
         for (int p = 0; p < npc; p++) {
-            System.out.println("Matrix Hpc at integration point " + (p + 1) + ":");
+            System.out.println("Matrix Hpc" + (p + 1) + ":");
             for (double[] row : Hpc[p]) {
                 System.out.print("|");
                 for (double value : row) {
