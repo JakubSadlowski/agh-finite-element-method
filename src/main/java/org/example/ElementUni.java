@@ -43,10 +43,6 @@ public class ElementUni {
         }
     }
 
-    public double[] getShapeFunctions() {
-        return shapeFunctions;
-    }
-
     public double[][] getdNdEta() {
         return dNdEta;
     }

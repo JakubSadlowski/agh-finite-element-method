@@ -2,17 +2,29 @@ package org.example;
 
 public class MatrixH {
     private final double[][][] J1;
+    private final double[] detJ;
     private final double[][] dNdKsi;
     private final double[][] dNdEta;
     private final int npc;
     private double[][] dNdX;
     private double[][] dNdY;
+    private double[][][] Hpc;
+    private double[][] H;
+    private final double[] weights;
+    private final double specificHeat = 30;
 
-    public MatrixH(double[][][] J1, double[][] dNdKsi, double[][] dNdEta, int npc) {
+    public MatrixH(double[][][] J1, double[] detJ, double[] weights,double[][] dNdKsi, double[][] dNdEta, int npc) {
         this.J1 = J1;
+        this.detJ = detJ;
+        this.weights = weights;
         this.dNdKsi = dNdKsi;
         this.dNdEta = dNdEta;
         this.npc = npc;
+
+        calculateDndX();
+        calculateDndY();
+        calculateMatrixHpc();
+        calculateMatrixH();
     }
 
     private void calculateDndX() {
@@ -33,10 +45,60 @@ public class MatrixH {
         }
     }
 
-    public void printResults() {
-        calculateDndX();
-        calculateDndY();
+    private void calculateMatrixHpc() {
+        int size = dNdX[0].length;
+        Hpc = new double[npc][size][size];
 
+        for(int p = 0; p < npc; p++) {
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    Hpc[p][i][j] += dNdX[p][i] * dNdX[p][j] + dNdY[p][i] * dNdY[p][j];
+                    Hpc[p][i][j] *= specificHeat;
+                    Hpc[p][i][j] *= detJ[p];
+                }
+            }
+        }
+    }
+
+    private void calculateMatrixH() {
+        int size = dNdX[0].length;
+        H = new double[size][size];
+
+        for(int p = 0; p < npc; p++) {
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    H[i][j] += Hpc[p][i][j] * weights[p];
+                }
+            }
+        }
+    }
+
+    public void printMatrixHpc() {
+        for (int p = 0; p < npc; p++) {
+            System.out.println("Matrix Hpc" + (p + 1));
+            for (double[] row : Hpc[p]) {
+                System.out.print("|");
+                for (double value : row) {
+                    System.out.printf(" %5.3f ", value);
+                }
+                System.out.println("|");
+            }
+            System.out.println();
+        }
+    }
+
+    public void printMatrixH() {
+        System.out.println("Matrix H:");
+        for (double[] row : H) {
+            System.out.print("|");
+            for (double value : row) {
+                System.out.printf(" %5.3f ", value);
+            }
+            System.out.println("|");
+        }
+    }
+
+    public void printResults() {
         System.out.println("------------------------------------------------------------");
         System.out.println("| pc | dN1/dX   | dN2/dX   | dN3/dX   | dN4/dX   |");
         System.out.println("------------------------------------------------------------");
@@ -61,5 +123,8 @@ public class MatrixH {
             System.out.println("|");
         }
         System.out.println("------------------------------------------------------------");
+
+        printMatrixHpc();
+        printMatrixH();
     }
 }
