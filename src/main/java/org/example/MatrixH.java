@@ -10,13 +10,13 @@ public class MatrixH {
     private double[][] dNdY;
     private double[][][] Hpc;
     private double[][] H;
-    private final double[] weights;
+    private final double[][] weights;
     private final double specificHeat = 30;
 
-    public MatrixH(double[][][] J1, double[] detJ, double[] weights, double[][] dNdKsi, double[][] dNdEta, int integrationPoints) {
+    public MatrixH(double[][][] J1, double[] detJ, double[][] dNdKsi, double[][] dNdEta, int integrationPoints) {
         this.J1 = J1;
         this.detJ = detJ;
-        this.weights = weights;
+        this.weights = GaussQuadratureData.get2DWeights(integrationPoints); // Ensure this provides a 2D array
         this.dNdKsi = dNdKsi;
         this.dNdEta = dNdEta;
         this.npc = integrationPoints * integrationPoints;
@@ -29,8 +29,8 @@ public class MatrixH {
 
     private void calculateDndX() {
         dNdX = new double[npc][dNdKsi[0].length];
-        for(int p = 0; p < npc; p++) {
-            for(int j = 0; j < dNdKsi[0].length; j++) {
+        for (int p = 0; p < npc; p++) {
+            for (int j = 0; j < dNdKsi[0].length; j++) {
                 dNdX[p][j] = J1[p][0][0] * dNdKsi[p][j] + J1[p][0][1] * dNdEta[p][j];
             }
         }
@@ -38,8 +38,8 @@ public class MatrixH {
 
     private void calculateDndY() {
         dNdY = new double[npc][dNdKsi[0].length];
-        for(int p = 0; p < npc; p++) {
-            for(int j = 0; j < dNdKsi[0].length; j++) {
+        for (int p = 0; p < npc; p++) {
+            for (int j = 0; j < dNdKsi[0].length; j++) {
                 dNdY[p][j] = J1[p][1][0] * dNdKsi[p][j] + J1[p][1][1] * dNdEta[p][j];
             }
         }
@@ -49,12 +49,13 @@ public class MatrixH {
         int size = dNdX[0].length;
         Hpc = new double[npc][size][size];
 
-        for(int p = 0; p < npc; p++) {
-            for (int i = 0; i < size; i++) {
-                for (int j = 0; j < size; j++) {
-                    Hpc[p][i][j] += dNdX[p][i] * dNdX[p][j] + dNdY[p][i] * dNdY[p][j];
-                    Hpc[p][i][j] *= specificHeat;
-                    Hpc[p][i][j] *= detJ[p];
+        for (int p = 0; p < npc; p++) {
+            int i = p / (int) Math.sqrt(npc);
+            int j = p % (int) Math.sqrt(npc);
+            for (int m = 0; m < size; m++) {
+                for (int n = 0; n < size; n++) {
+                    Hpc[p][m][n] = (dNdX[p][m] * dNdX[p][n] + dNdY[p][m] * dNdY[p][n])
+                            * specificHeat * detJ[p] * weights[i][j];
                 }
             }
         }
@@ -63,11 +64,10 @@ public class MatrixH {
     private void calculateMatrixH() {
         int size = dNdX[0].length;
         H = new double[size][size];
-
-        for(int p = 0; p < npc; p++) {
-            for (int i = 0; i < size; i++) {
-                for (int j = 0; j < size; j++) {
-                    H[i][j] += Hpc[p][i][j] * weights[p];
+        for (int p = 0; p < npc; p++) {
+            for (int m = 0; m < size; m++) {
+                for (int n = 0; n < size; n++) {
+                    H[m][n] += Hpc[p][m][n];
                 }
             }
         }
@@ -75,7 +75,7 @@ public class MatrixH {
 
     public void printMatrixHpc() {
         for (int p = 0; p < npc; p++) {
-            System.out.println("Matrix Hpc" + (p + 1));
+            System.out.println("Matrix Hpc at integration point " + (p + 1) + ":");
             for (double[] row : Hpc[p]) {
                 System.out.print("|");
                 for (double value : row) {

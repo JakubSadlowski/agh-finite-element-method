@@ -29,16 +29,16 @@ public class Main {
         nodes[2] = new Node(0.025, 0.025, 3);
         nodes[3] = new Node(0.0, 0.025, 4);
 
-        ElementUni elementUni = new ElementUni(2);
+        ElementUni elementUni = new ElementUni(3);
         double[][] dNdKsi = elementUni.getdNdKsi();
         double[][] dNdEta = elementUni.getdNdEta();
-        elementUni.printResults();
+        //elementUni.printResults();
 
-        /*Jacobian jacobian = new Jacobian(4);
-        jacobian.calculateJacobians(nodes, dNdKsi, dNdEta);*/
+        Jacobian jacobian = new Jacobian(3);
+        jacobian.calculateJacobians(nodes, dNdKsi, dNdEta);
         //jacobian.printJacobians();
 
-        /*MatrixH matrixH = new MatrixH(jacobian.getJ1(), jacobian.getDetJ(), weights, dNdKsi, dNdEta, 4);
-        matrixH.printResults();*/
+        MatrixH matrixH = new MatrixH(jacobian.getJ1(), jacobian.getDetJ(), dNdKsi, dNdEta, 3);
+        matrixH.printResults();
     }
 }

@@ -10,8 +10,9 @@ public class ElementUni {
 
     public ElementUni(int integrationPoints) {
         this.npc = integrationPoints * integrationPoints;
-        this.ksi = GaussQuadratureData.get1DNodes(2);
-        this.eta = GaussQuadratureData.get1DNodes(2);
+        GaussQuadratureData gaussQuadratureData = new GaussQuadratureData(integrationPoints);
+        this.ksi = gaussQuadratureData.getNodes();
+        this.eta = gaussQuadratureData.getNodes();
         shapeFunctions = new double[4];
         dNdKsi = new double[npc][4];
         dNdEta = new double[npc][4];
@@ -21,8 +22,8 @@ public class ElementUni {
 
     private void calculateShapeFunctionsAndDerivatives() {
         for (int p = 0; p < npc; p++) {
-            double ksiP = ksi[p % ksi.length];
-            double etaP = eta[p / eta.length];
+            double ksiP = ksi[p / ksi.length];
+            double etaP = eta[p % eta.length];
 
             shapeFunctions[0] = 0.25 * (1 - ksiP) * (1 - etaP);
             shapeFunctions[1] = 0.25 * (1 + ksiP) * (1 - etaP);

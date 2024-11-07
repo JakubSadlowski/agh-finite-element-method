@@ -6,8 +6,8 @@ public class Jacobian {
     private double[] detJ;
     private final int npc;
 
-    public Jacobian(int npc) {
-        this.npc = npc;
+    public Jacobian(int integrationPoints) {
+        this.npc = integrationPoints * integrationPoints;
         J = new double[npc][2][2];
         J1 = new double[npc][2][2];
         detJ = new double[npc];
