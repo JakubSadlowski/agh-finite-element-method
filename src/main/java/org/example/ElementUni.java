@@ -1,30 +1,28 @@
 package org.example;
 
 public class ElementUni {
-    private double ksi = 1.0 / Math.sqrt(3);
-    private double eta = 1.0 / Math.sqrt(3);
+    private double[] ksi;
+    private double[] eta;
     private final double[][] dNdKsi;
     private final double[][] dNdEta;
     private final double[] shapeFunctions;
-    private final int npc = 4;
+    private final int npc;
 
-    public ElementUni() {
+    public ElementUni(int integrationPoints) {
+        this.npc = integrationPoints * integrationPoints;
+        this.ksi = GaussQuadratureData.get1DNodes(2);
+        this.eta = GaussQuadratureData.get1DNodes(2);
         shapeFunctions = new double[4];
         dNdKsi = new double[npc][4];
         dNdEta = new double[npc][4];
 
-        // Define ksi and eta for each integration point
-        double[][] ksiEtaValues = {
-                {-ksi, -eta},  // pc1
-                { ksi, -eta},  // pc2
-                { ksi,  eta},  // pc3
-                {-ksi,  eta}   // pc4
-        };
+        calculateShapeFunctionsAndDerivatives();
+    }
 
-        // Calculate shape functions and derivatives for each point
+    private void calculateShapeFunctionsAndDerivatives() {
         for (int p = 0; p < npc; p++) {
-            double ksiP = ksiEtaValues[p][0];
-            double etaP = ksiEtaValues[p][1];
+            double ksiP = ksi[p % ksi.length];
+            double etaP = eta[p / eta.length];
 
             shapeFunctions[0] = 0.25 * (1 - ksiP) * (1 - etaP);
             shapeFunctions[1] = 0.25 * (1 + ksiP) * (1 - etaP);

@@ -28,12 +28,11 @@ public class Main {
         nodes[1] = new Node(0.025, 0.0, 2);
         nodes[2] = new Node(0.025, 0.025, 3);
         nodes[3] = new Node(0.0, 0.025, 4);
-        double[] weights = {1.0, 1.0, 1.0, 1.0};
 
-        ElementUni elementUni = new ElementUni();
+        ElementUni elementUni = new ElementUni(2);
         double[][] dNdKsi = elementUni.getdNdKsi();
         double[][] dNdEta = elementUni.getdNdEta();
-        //elementUni.printResults();
+        elementUni.printResults();
 
         /*Jacobian jacobian = new Jacobian(4);
         jacobian.calculateJacobians(nodes, dNdKsi, dNdEta);*/

@@ -13,13 +13,13 @@ public class MatrixH {
     private final double[] weights;
     private final double specificHeat = 30;
 
-    public MatrixH(double[][][] J1, double[] detJ, double[] weights,double[][] dNdKsi, double[][] dNdEta, int npc) {
+    public MatrixH(double[][][] J1, double[] detJ, double[] weights, double[][] dNdKsi, double[][] dNdEta, int integrationPoints) {
         this.J1 = J1;
         this.detJ = detJ;
         this.weights = weights;
         this.dNdKsi = dNdKsi;
         this.dNdEta = dNdEta;
-        this.npc = npc;
+        this.npc = integrationPoints * integrationPoints;
 
         calculateDndX();
         calculateDndY();
