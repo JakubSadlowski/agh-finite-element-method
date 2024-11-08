@@ -17,14 +17,15 @@ public class IntegratingFunctions {
     }
 
     private static double gauss2d(Function<double[], Double> f, int points) {
-        double[][] nodes = GaussQuadratureData.get2DNodes(points);
-        double[][] weights = GaussQuadratureData.get2DWeights(points);
+        GaussQuadratureData gaussData = new GaussQuadratureData(points);
+        double[] nodes = gaussData.getNodes();
+        double[] weights = gaussData.getWeights();
         double result = 0.0;
 
         for (int i = 0; i < points; i++) {
             for (int j = 0; j < points; j++) {
-                double[] point = {nodes[i][0], nodes[j][1]};
-                result += weights[i][j] * f.apply(point);
+                double[] point = {nodes[i], nodes[j]};
+                result += weights[i] * weights[j] * f.apply(point);
             }
         }
         return result;

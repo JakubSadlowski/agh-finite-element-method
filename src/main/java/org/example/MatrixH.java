@@ -10,11 +10,11 @@ public class MatrixH {
     private double[][] dNdY;
     private double[][][] Hpc;
     private double[][] H;
-    private final double[][] weights;
-    private final double specificHeat = 30;
+    private final double[] weights;
+    private final double conductivity = 30;
 
     public MatrixH(double[][][] J1, double[] detJ, double[][] dNdKsi, double[][] dNdEta, int integrationPoints) {
-        GaussQuadrature2D gaussQuadratureData = new GaussQuadrature2D(integrationPoints);
+        GaussQuadratureData gaussQuadratureData = new GaussQuadratureData(integrationPoints);
         this.J1 = J1;
         this.detJ = detJ;
         this.weights = gaussQuadratureData.getWeights();
@@ -51,12 +51,12 @@ public class MatrixH {
         H = new double[size][size];
 
         for (int p = 0; p < npc; p++) {
-            int i = p / (int) Math.sqrt(npc);
-            int j = p % (int) Math.sqrt(npc);
+            double weight = weights[p % weights.length];
+
             for (int m = 0; m < size; m++) {
                 for (int n = 0; n < size; n++) {
                     Hpc[p][m][n] = (dNdX[p][m] * dNdX[p][n] + dNdY[p][m] * dNdY[p][n])
-                            * specificHeat * detJ[p] * weights[i][j];
+                            * conductivity * detJ[p] * weight;
                     H[m][n] += Hpc[p][m][n];
                 }
             }

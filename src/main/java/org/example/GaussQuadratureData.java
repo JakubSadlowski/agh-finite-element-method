@@ -26,33 +26,4 @@ public class GaussQuadratureData {
     public double[] getWeights() {
         return weights;
     }
-
-    public static double[][] get2DNodes(int points) {
-        GaussQuadratureData gaussData = new GaussQuadratureData(points);
-        double[] nodes1D = gaussData.getNodes();
-        double[][] nodes2D = new double[points * points][2]; // 2D array for nodes
-        int index = 0;
-
-        for (double ksi : nodes1D) {
-            for (double eta : nodes1D) {
-                nodes2D[index][0] = ksi; // Ksi direction
-                nodes2D[index][1] = eta; // Eta direction
-                index++;
-            }
-        }
-        return nodes2D;
-    }
-
-    public static double[][] get2DWeights(int points) {
-        GaussQuadratureData gaussData = new GaussQuadratureData(points);
-        double[] weights1D = gaussData.getWeights();
-        double[][] weights2D = new double[points][points];
-
-        for (int i = 0; i < points; i++) {
-            for (int j = 0; j < points; j++) {
-                weights2D[i][j] = weights1D[i] * weights1D[j];
-            }
-        }
-        return weights2D;
-    }
 }
