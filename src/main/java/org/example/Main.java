@@ -23,6 +23,12 @@ public class Main {
         System.out.println("2D Integral (2-point): " + integrate2D(f2D, 2));
         System.out.println("2D Integral (3-point): " + integrate2D(f2D, 3));*/
 
+        /*Node[] nodes = new Node[4];
+        nodes[0] = new Node(0.0, 0.0, 1);
+        nodes[1] = new Node(0.025, 0.0, 2);
+        nodes[2] = new Node(0.025, 0.025, 3);
+        nodes[3] = new Node(0.0, 0.025, 4);*/
+
         Node[] nodes = new Node[4];
         nodes[0] = new Node(0.01, -0.01, 1);
         nodes[1] = new Node(0.025, 0.0, 2);

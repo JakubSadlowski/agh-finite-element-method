@@ -10,21 +10,25 @@ public class MatrixH {
     private double[][] dNdY;
     private double[][][] Hpc;
     private double[][] H;
-    private final double[] weights;
+    private final double[] gaussWeights;
+    private double[] calculatedWeights;
+    private int integrationPoints;
     private final double conductivity = 30;
 
     public MatrixH(double[][][] J1, double[] detJ, double[][] dNdKsi, double[][] dNdEta, int integrationPoints) {
         GaussQuadratureData gaussQuadratureData = new GaussQuadratureData(integrationPoints);
         this.J1 = J1;
         this.detJ = detJ;
-        this.weights = gaussQuadratureData.getWeights();
+        this.gaussWeights = gaussQuadratureData.getWeights();
         this.dNdKsi = dNdKsi;
         this.dNdEta = dNdEta;
         this.npc = integrationPoints * integrationPoints;
+        this.integrationPoints = integrationPoints;
 
         calculateDndX();
         calculateDndY();
-        calculateMatrixHpc();
+        calculateWeights();
+        calculateMatrixH();
     }
 
     private void calculateDndX() {
@@ -45,18 +49,26 @@ public class MatrixH {
         }
     }
 
-    private void calculateMatrixHpc() {
+    private void calculateWeights() {
+        int index = 0;
+        calculatedWeights = new double[npc];
+        for (int i = 0; i < integrationPoints; i++) {
+            for (int j = 0; j < integrationPoints; j++) {
+                calculatedWeights[index++] = gaussWeights[i] * gaussWeights[j];
+            }
+        }
+    }
+
+    private void calculateMatrixH() {
         int size = dNdX[0].length;
         Hpc = new double[npc][size][size];
         H = new double[size][size];
 
         for (int p = 0; p < npc; p++) {
-            double weight = weights[p % weights.length];
-
+            double weight = calculatedWeights[p] * detJ[p];
             for (int m = 0; m < size; m++) {
                 for (int n = 0; n < size; n++) {
-                    Hpc[p][m][n] = (dNdX[p][m] * dNdX[p][n] + dNdY[p][m] * dNdY[p][n])
-                            * conductivity * detJ[p] * weight;
+                    Hpc[p][m][n] = (dNdX[p][m] * dNdX[p][n] + dNdY[p][m] * dNdY[p][n]) * conductivity * weight;
                     H[m][n] += Hpc[p][m][n];
                 }
             }
