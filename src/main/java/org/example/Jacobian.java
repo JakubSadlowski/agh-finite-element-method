@@ -38,8 +38,8 @@ public class Jacobian {
                 double y = nodes[i].getY();
 
                 J[p][0][0] += dNdKsi[p][i] * x;  // dXdKsi
-                J[p][0][1] += dNdEta[p][i] * x;  // dXdEta
-                J[p][1][0] += dNdKsi[p][i] * y;  // dYdKsi
+                J[p][0][1] += dNdKsi[p][i] * y;  // dYdKsi
+                J[p][1][0] += dNdEta[p][i] * x;  // dXdEta
                 J[p][1][1] += dNdEta[p][i] * y;  // dYdEta
             }
 

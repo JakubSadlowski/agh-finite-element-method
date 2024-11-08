@@ -24,21 +24,21 @@ public class Main {
         System.out.println("2D Integral (3-point): " + integrate2D(f2D, 3));*/
 
         Node[] nodes = new Node[4];
-        nodes[0] = new Node(0.0, 0.0, 1);
+        nodes[0] = new Node(0.01, -0.01, 1);
         nodes[1] = new Node(0.025, 0.0, 2);
         nodes[2] = new Node(0.025, 0.025, 3);
         nodes[3] = new Node(0.0, 0.025, 4);
 
-        ElementUni elementUni = new ElementUni(3);
+        ElementUni elementUni = new ElementUni(2);
         double[][] dNdKsi = elementUni.getdNdKsi();
         double[][] dNdEta = elementUni.getdNdEta();
-        //elementUni.printResults();
+        elementUni.printResults();
 
-        Jacobian jacobian = new Jacobian(3);
+        Jacobian jacobian = new Jacobian(2);
         jacobian.calculateJacobians(nodes, dNdKsi, dNdEta);
-        //jacobian.printJacobians();
+        jacobian.printJacobians();
 
-        MatrixH matrixH = new MatrixH(jacobian.getJ1(), jacobian.getDetJ(), dNdKsi, dNdEta, 3);
+        MatrixH matrixH = new MatrixH(jacobian.getJ1(), jacobian.getDetJ(), dNdKsi, dNdEta, 2);
         matrixH.printResults();
     }
 }

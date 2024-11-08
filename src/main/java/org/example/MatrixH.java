@@ -14,9 +14,10 @@ public class MatrixH {
     private final double specificHeat = 30;
 
     public MatrixH(double[][][] J1, double[] detJ, double[][] dNdKsi, double[][] dNdEta, int integrationPoints) {
+        GaussQuadrature2D gaussQuadratureData = new GaussQuadrature2D(integrationPoints);
         this.J1 = J1;
         this.detJ = detJ;
-        this.weights = GaussQuadratureData.get2DWeights(integrationPoints);
+        this.weights = gaussQuadratureData.getWeights();
         this.dNdKsi = dNdKsi;
         this.dNdEta = dNdEta;
         this.npc = integrationPoints * integrationPoints;
@@ -24,7 +25,6 @@ public class MatrixH {
         calculateDndX();
         calculateDndY();
         calculateMatrixHpc();
-        calculateMatrixH();
     }
 
     private void calculateDndX() {
@@ -48,6 +48,7 @@ public class MatrixH {
     private void calculateMatrixHpc() {
         int size = dNdX[0].length;
         Hpc = new double[npc][size][size];
+        H = new double[size][size];
 
         for (int p = 0; p < npc; p++) {
             int i = p / (int) Math.sqrt(npc);
@@ -56,17 +57,6 @@ public class MatrixH {
                 for (int n = 0; n < size; n++) {
                     Hpc[p][m][n] = (dNdX[p][m] * dNdX[p][n] + dNdY[p][m] * dNdY[p][n])
                             * specificHeat * detJ[p] * weights[i][j];
-                }
-            }
-        }
-    }
-
-    private void calculateMatrixH() {
-        int size = dNdX[0].length;
-        H = new double[size][size];
-        for (int p = 0; p < npc; p++) {
-            for (int m = 0; m < size; m++) {
-                for (int n = 0; n < size; n++) {
                     H[m][n] += Hpc[p][m][n];
                 }
             }
