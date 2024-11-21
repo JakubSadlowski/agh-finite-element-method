@@ -22,6 +22,11 @@ public class FileDataReader {
             while ((line = br.readLine()) != null) {
                 String[] tokens = line.split("[,\\s]+");
 
+                if (line.startsWith("*BC") || line.startsWith("BC") || line.trim().isEmpty()) {
+                    readingElements = false;
+                    continue;
+                }
+
                 if (line.startsWith("SimulationTime")) {
                     globalData = new GlobalData(
                             Double.parseDouble(tokens[1]), 0, 0, 0, 0, 0, 0, 0, 0, 0
