@@ -21,14 +21,6 @@ public class Element {
         return elementID;
     }
 
-    public void setElements(int[] elements) {
-        if (elements.length == 4) {
-            System.arraycopy(elements, 0, this.elements, 0, elements.length);
-        } else {
-            throw new IllegalArgumentException("Elements array must have exactly 4 elements.");
-        }
-    }
-
     @Override
     public String toString() {
         return "Element " +  elementID + " {" + "ID=" + java.util.Arrays.toString(elements) + "}";

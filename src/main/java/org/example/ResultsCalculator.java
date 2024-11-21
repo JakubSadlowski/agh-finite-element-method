@@ -2,7 +2,7 @@ package org.example;
 
 public class ResultsCalculator {
 
-    public static GlobalData calculateResults(GlobalData globalData, int integrationPoints) {
+    public static void calculateResults(GlobalData globalData, int integrationPoints) {
         Grid grid = globalData.getGrid();
 
         ElementUni elementUni = new ElementUni(integrationPoints);
@@ -15,7 +15,5 @@ public class ResultsCalculator {
             MatrixH matrixH = new MatrixH(integrationPoints, globalData, elementUni, jacobian);
             matrixH.printResults();
         }
-
-        return globalData;
     }
 }

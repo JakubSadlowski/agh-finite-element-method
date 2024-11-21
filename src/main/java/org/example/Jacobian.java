@@ -1,14 +1,14 @@
 package org.example;
 
 public class Jacobian {
-    private double[][][] J;
-    private double[][][] J1;
-    private double[] detJ;
+    private final double[][][] J;
+    private final double[][][] J1;
+    private final double[] detJ;
     private final int npc;
-    private double[][] dNdKsi;
-    private double[][] dNdEta;
-    private GlobalData globalData;
-    private int currentElementID;
+    private final double[][] dNdKsi;
+    private final double[][] dNdEta;
+    private final GlobalData globalData;
+    private final int currentElementID;
 
     public Jacobian(int integrationPoints, GlobalData globalData, ElementUni elementUni, int elementID) {
         this.npc = integrationPoints * integrationPoints;
@@ -32,10 +32,6 @@ public class Jacobian {
 
     public double[] getDetJ() {
         return detJ;
-    }
-
-    public int getNpc() {
-        return npc;
     }
 
     private void calculateJacobians() {
@@ -93,7 +89,7 @@ public class Jacobian {
         for (double[] row : matrix) {
             System.out.print("[");
             for (int i = 0; i < row.length; i++) {
-                System.out.print(String.format("%.5f", row[i]));
+                System.out.printf("%.5f", row[i]);
                 if (i < row.length - 1) {
                     System.out.print(" ");
                 }

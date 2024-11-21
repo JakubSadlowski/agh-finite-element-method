@@ -4,7 +4,6 @@ public class ElementUni {
     private final double[] ksiEtaValues;
     private final double[][] dNdKsi;
     private final double[][] dNdEta;
-    private final double[] shapeFunctions;
     private final int npc;
     private final int numPoints;
 
@@ -13,7 +12,6 @@ public class ElementUni {
         this.numPoints = integrationPoints;
         GaussQuadratureData gaussQuadratureData = new GaussQuadratureData(integrationPoints);
         this.ksiEtaValues = gaussQuadratureData.getNodes();
-        shapeFunctions = new double[4];
         dNdKsi = new double[npc][4];
         dNdEta = new double[npc][4];
         calculateShapeFunctionsAndDerivatives();
@@ -24,10 +22,6 @@ public class ElementUni {
             double eta = ksiEtaValues[i];
             for (int j = 0; j < numPoints; j++) {
                 double ksi = ksiEtaValues[j];
-                shapeFunctions[0] = 0.25 * (1 - ksi) * (1 - eta);
-                shapeFunctions[1] = 0.25 * (1 + ksi) * (1 - eta);
-                shapeFunctions[2] = 0.25 * (1 + ksi) * (1 + eta);
-                shapeFunctions[3] = 0.25 * (1 - ksi) * (1 + eta);
 
                 dNdKsi[i * numPoints + j][0] = -0.25 * (1 - eta);
                 dNdKsi[i * numPoints + j][1] = 0.25 * (1 - eta);

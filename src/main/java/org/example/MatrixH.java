@@ -12,7 +12,7 @@ public class MatrixH {
     private double[][] H;
     private final double[] gaussWeights;
     private double[] calculatedWeights;
-    private int integrationPoints;
+    private final int integrationPoints;
     private final double conductivity;
 
     public MatrixH(int integrationPoints, GlobalData globalData, ElementUni elementUni, Jacobian jacobian) {
@@ -30,10 +30,6 @@ public class MatrixH {
         calculateDndY();
         calculateWeights();
         calculateMatrixH();
-    }
-
-    public double[][] getH() {
-        return H;
     }
 
     private void calculateDndX() {
