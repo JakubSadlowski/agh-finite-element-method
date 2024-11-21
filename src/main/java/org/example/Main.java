@@ -12,8 +12,8 @@ public class Main {
         String filePath = "G:\\Programowanie_projekty\\IdeaProjects\\MES\\src\\main\\resources\\Test1_4_4.txt";
         String filePath2 = "G:\\Programowanie_projekty\\IdeaProjects\\MES\\src\\main\\resources\\Test2_4_4_MixGrid.txt";
         GlobalData globalData = readFile(filePath2);
-        printFromFile(globalData);
-        //ResultsCalculator.calculateResults(globalData, 2);
+        //printFromFile(globalData);
+        ResultsCalculator.calculateResults(globalData, 2);
 
         /*Function<Double, Double> f1D = x -> 5 * x * x + 3 * x + 6;
         System.out.println("\n\n1D Integral (1-point): " + integrate1D(f1D, 1));

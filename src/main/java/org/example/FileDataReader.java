@@ -134,7 +134,9 @@ public class FileDataReader {
             }
 
         } catch (IOException e) {
+            System.err.println("File could not be read properly.");
             e.printStackTrace();
+
         } catch (NullPointerException npe) {
             System.err.println("Error: " + npe.getMessage());
         }
