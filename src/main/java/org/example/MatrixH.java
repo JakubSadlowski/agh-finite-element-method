@@ -13,9 +13,10 @@ public class MatrixH {
     private final double[] gaussWeights;
     private double[] calculatedWeights;
     private int integrationPoints;
-    private final double conductivity = 30;
+    private final double conductivity;
 
-    public MatrixH(int integrationPoints, ElementUni elementUni, Jacobian jacobian) {
+    public MatrixH(int integrationPoints, GlobalData globalData, ElementUni elementUni, Jacobian jacobian) {
+        conductivity = globalData.getConductivity();
         GaussQuadratureData gaussQuadratureData = new GaussQuadratureData(integrationPoints);
         this.J1 = jacobian.getJ1();
         this.detJ = jacobian.getDetJ();
@@ -29,6 +30,10 @@ public class MatrixH {
         calculateDndY();
         calculateWeights();
         calculateMatrixH();
+    }
+
+    public double[][] getH() {
+        return H;
     }
 
     private void calculateDndX() {
@@ -66,10 +71,10 @@ public class MatrixH {
 
         for (int p = 0; p < npc; p++) {
             double weight = calculatedWeights[p] * detJ[p];
-            for (int m = 0; m < size; m++) {
-                for (int n = 0; n < size; n++) {
-                    Hpc[p][m][n] = (dNdX[p][m] * dNdX[p][n] + dNdY[p][m] * dNdY[p][n]) * conductivity * weight;
-                    H[m][n] += Hpc[p][m][n];
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    Hpc[p][i][j] = (dNdX[p][i] * dNdX[p][j] + dNdY[p][i] * dNdY[p][j]) * conductivity * weight;
+                    H[i][j] += Hpc[p][i][j];
                 }
             }
         }
@@ -126,7 +131,7 @@ public class MatrixH {
         }
         System.out.println("------------------------------------------------------------");
 
-        printMatrixHpc();
+        //printMatrixHpc();
         printMatrixH();
     }
 }

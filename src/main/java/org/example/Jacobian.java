@@ -8,16 +8,18 @@ public class Jacobian {
     private double[][] dNdKsi;
     private double[][] dNdEta;
     private GlobalData globalData;
-    private Node[] nodes;
+    private int currentElementID;
 
-    public Jacobian(int integrationPoints, GlobalData globalData, ElementUni elementUni) {
+    public Jacobian(int integrationPoints, GlobalData globalData, ElementUni elementUni, int elementID) {
         this.npc = integrationPoints * integrationPoints;
+        currentElementID = elementID;
         J = new double[npc][2][2];
         J1 = new double[npc][2][2];
         detJ = new double[npc];
         dNdKsi = elementUni.getdNdKsi();
         dNdEta = elementUni.getdNdEta();
         this.globalData = globalData;
+        calculateJacobians();
     }
 
     public double[][] getJ(int pointIndex) {
@@ -36,15 +38,16 @@ public class Jacobian {
         return npc;
     }
 
-    public void calculateJacobians() {
-        nodes = globalData.getGrid().getNodes();
+    private void calculateJacobians() {
+        Node[] nodes = globalData.getGrid().getNodes();
+        Element[] elements = globalData.getGrid().getElements();
+        int[] currentElement = elements[currentElementID - 1].getElements();
 
         for (int p = 0; p < npc; p++) {
-            J[p][0][0] = J[p][0][1] = J[p][1][0] = J[p][1][1] = 0.0;
-
-            for (int i = 0; i < nodes.length; i++) {
-                double x = nodes[i].getX();
-                double y = nodes[i].getY();
+            for (int i = 0; i < elements[currentElementID - 1].getElements().length; i++) {
+                int currentNodeID = currentElement[i];
+                double x = nodes[currentNodeID - 1].getX();
+                double y = nodes[currentNodeID - 1].getY();
 
                 J[p][0][0] += dNdKsi[p][i] * x;  // dXdKsi
                 J[p][0][1] += dNdKsi[p][i] * y;  // dYdKsi

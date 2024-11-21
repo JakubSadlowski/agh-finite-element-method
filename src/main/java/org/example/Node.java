@@ -27,6 +27,10 @@ public class Node {
         this.y = y;
     }
 
+    public int getNodeID() {
+        return nodeID;
+    }
+
     @Override
     public String toString() {
         return "Node " +  nodeID + " {" + "x=" + x + ", y=" + y + "}";

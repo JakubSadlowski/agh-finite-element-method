@@ -17,6 +17,10 @@ public class Element {
         return elements;
     }
 
+    public int getElementID() {
+        return elementID;
+    }
+
     public void setElements(int[] elements) {
         if (elements.length == 4) {
             System.arraycopy(elements, 0, this.elements, 0, elements.length);

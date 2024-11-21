@@ -3,11 +3,19 @@ package org.example;
 public class ResultsCalculator {
 
     public static GlobalData calculateResults(GlobalData globalData, int integrationPoints) {
-        int elementsNum = globalData.getnE();
+        Grid grid = globalData.getGrid();
 
         ElementUni elementUni = new ElementUni(integrationPoints);
-        
+        //elementUni.printResults();
 
-        return null;
+        for (Element element : grid.getElements()) {
+            System.out.println("\nCalculations for element: " + element.getElementID());
+            Jacobian jacobian = new Jacobian(integrationPoints, globalData, elementUni, element.getElementID());
+            //jacobian.printJacobians();
+            MatrixH matrixH = new MatrixH(integrationPoints, globalData, elementUni, jacobian);
+            matrixH.printResults();
+        }
+
+        return globalData;
     }
 }
