@@ -15,13 +15,13 @@ public class MatrixH {
     private int integrationPoints;
     private final double conductivity = 30;
 
-    public MatrixH(double[][][] J1, double[] detJ, double[][] dNdKsi, double[][] dNdEta, int integrationPoints) {
+    public MatrixH(int integrationPoints, ElementUni elementUni, Jacobian jacobian) {
         GaussQuadratureData gaussQuadratureData = new GaussQuadratureData(integrationPoints);
-        this.J1 = J1;
-        this.detJ = detJ;
+        this.J1 = jacobian.getJ1();
+        this.detJ = jacobian.getDetJ();
         this.gaussWeights = gaussQuadratureData.getWeights();
-        this.dNdKsi = dNdKsi;
-        this.dNdEta = dNdEta;
+        this.dNdKsi = elementUni.getdNdKsi();
+        this.dNdEta = elementUni.getdNdEta();
         this.npc = integrationPoints * integrationPoints;
         this.integrationPoints = integrationPoints;
 

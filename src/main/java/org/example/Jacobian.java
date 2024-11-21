@@ -5,12 +5,19 @@ public class Jacobian {
     private double[][][] J1;
     private double[] detJ;
     private final int npc;
+    private double[][] dNdKsi;
+    private double[][] dNdEta;
+    private GlobalData globalData;
+    private Node[] nodes;
 
-    public Jacobian(int integrationPoints) {
+    public Jacobian(int integrationPoints, GlobalData globalData, ElementUni elementUni) {
         this.npc = integrationPoints * integrationPoints;
         J = new double[npc][2][2];
         J1 = new double[npc][2][2];
         detJ = new double[npc];
+        dNdKsi = elementUni.getdNdKsi();
+        dNdEta = elementUni.getdNdEta();
+        this.globalData = globalData;
     }
 
     public double[][] getJ(int pointIndex) {
@@ -29,7 +36,9 @@ public class Jacobian {
         return npc;
     }
 
-    public void calculateJacobians(Node[] nodes, double[][] dNdKsi, double[][] dNdEta) {
+    public void calculateJacobians() {
+        nodes = globalData.getGrid().getNodes();
+
         for (int p = 0; p < npc; p++) {
             J[p][0][0] = J[p][0][1] = J[p][1][0] = J[p][1][1] = 0.0;
 

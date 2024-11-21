@@ -29,22 +29,22 @@ public class Main {
         nodes[2] = new Node(0.025, 0.025, 3);
         nodes[3] = new Node(0.0, 0.025, 4);*/
 
-        Node[] nodes = new Node[4];
+        /*Node[] nodes = new Node[4];
         nodes[0] = new Node(0.01, -0.01, 1);
         nodes[1] = new Node(0.025, 0.0, 2);
         nodes[2] = new Node(0.025, 0.025, 3);
         nodes[3] = new Node(0.0, 0.025, 4);
 
-        ElementUni elementUni = new ElementUni(2);
+        ElementUni elementUni = new ElementUni(3);
         double[][] dNdKsi = elementUni.getdNdKsi();
         double[][] dNdEta = elementUni.getdNdEta();
         elementUni.printResults();
 
-        Jacobian jacobian = new Jacobian(2);
+        Jacobian jacobian = new Jacobian(3);
         jacobian.calculateJacobians(nodes, dNdKsi, dNdEta);
         jacobian.printJacobians();
 
-        MatrixH matrixH = new MatrixH(jacobian.getJ1(), jacobian.getDetJ(), dNdKsi, dNdEta, 2);
-        matrixH.printResults();
+        MatrixH matrixH = new MatrixH(jacobian.getJ1(), jacobian.getDetJ(), dNdKsi, dNdEta, 3);
+        matrixH.printResults();*/
     }
 }
