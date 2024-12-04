@@ -32,6 +32,10 @@ public class MatrixH {
         calculateMatrixH();
     }
 
+    public double[][] getH() {
+        return H;
+    }
+
     private void calculateDndX() {
         dNdX = new double[npc][dNdKsi[0].length];
         for (int p = 0; p < npc; p++) {

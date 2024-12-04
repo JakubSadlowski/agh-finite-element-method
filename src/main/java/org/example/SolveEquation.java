@@ -1,9 +1,15 @@
 package org.example;
 
-public class ResultsCalculator {
+public class SolveEquation {
+    GlobalData globalData;
 
-    public static void calculateResults(GlobalData globalData, int integrationPoints) {
+    public SolveEquation(GlobalData globalData) {
+        this.globalData = globalData;
+    }
+
+    public void calculateResults(int integrationPoints) {
         Grid grid = globalData.getGrid();
+        GlobalMatrixH globalMatrixH = new GlobalMatrixH(globalData);
 
         ElementUni elementUni = new ElementUni(integrationPoints);
         //elementUni.printResults();
@@ -14,6 +20,9 @@ public class ResultsCalculator {
             //jacobian.printJacobians();
             MatrixH matrixH = new MatrixH(integrationPoints, globalData, elementUni, jacobian);
             matrixH.printResults();
+            globalMatrixH.calculateGlobalMatrixH(element, matrixH.getH());
         }
+
+        globalMatrixH.printGlobalMatrixH();
     }
 }
