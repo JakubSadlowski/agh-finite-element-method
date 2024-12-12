@@ -18,10 +18,11 @@ public class SolveEquation {
             System.out.println("\nCalculations for element: " + element.getElementID());
             Jacobian jacobian = new Jacobian(integrationPoints, globalData, elementUni, element.getElementID());
             MatrixHbc matrixHbc = new MatrixHbc(globalData, element, integrationPoints);
-            matrixHbc.printResults();
+            //matrixHbc.printResults();
             //jacobian.printJacobians();
-            //MatrixH matrixH = new MatrixH(integrationPoints, globalData, elementUni, jacobian);
-            //matrixH.printResults();
+            MatrixH matrixH = new MatrixH(integrationPoints, globalData, elementUni, jacobian);
+            matrixH.addHbc(matrixHbc);
+            matrixH.printMatrixH();
             //globalMatrixH.calculateGlobalMatrixH(element, matrixH.getH());
         }
 
