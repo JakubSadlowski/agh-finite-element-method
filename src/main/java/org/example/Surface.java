@@ -2,39 +2,37 @@ package org.example;
 
 public class Surface {
     private final double[][] N;
-    private final int npc;
+    private final int numPoints;
 
-    public Surface(int integrationPoints) {
-        this.npc = integrationPoints;
-        this.N = new double[npc][4];
-        calculateShapeFunctions();
+    public Surface(int numPoints) {
+        this.numPoints = numPoints;
+        this.N = new double[4][4]; // 4 surfaces x 4 nodes
     }
 
-    private void calculateShapeFunctions() {
-        GaussQuadratureData gaussData = new GaussQuadratureData(npc);
-        double[] ksi = gaussData.getNodes();
+    public void calculateSurfaceShapeFunctions(double ksi) {
+        // Shape functions for 1D element (on surface)
+        N[0][0] = 0.25 * (1 - ksi); // N1
+        N[0][1] = 0.25 * (1 + ksi); // N2
+        N[0][2] = 0;                // N3
+        N[0][3] = 0;                // N4
 
-        for (int i = 0; i < npc; i++) {
-            // Shape functions for 1D element (edge of 2D element)
-            N[i][0] = 0.5 * (1 - ksi[i]);  // N1
-            N[i][1] = 0.5 * (1 + ksi[i]);  // N2
-            N[i][2] = 0;                    // N3
-            N[i][3] = 0;                    // N4
-        }
+        N[1][0] = 0;                // N1
+        N[1][1] = 0.25 * (1 - ksi); // N2
+        N[1][2] = 0.25 * (1 + ksi); // N3
+        N[1][3] = 0;                // N4
+
+        N[2][0] = 0;                // N1
+        N[2][1] = 0;                // N2
+        N[2][2] = 0.25 * (1 - ksi); // N3
+        N[2][3] = 0.25 * (1 + ksi); // N4
+
+        N[3][0] = 0.25 * (1 + ksi); // N1
+        N[3][1] = 0;                // N2
+        N[3][2] = 0;                // N3
+        N[3][3] = 0.25 * (1 - ksi); // N4
     }
 
     public double[][] getN() {
         return N;
-    }
-
-    public void printShapeFunctions() {
-        System.out.println("Surface Shape Functions:");
-        for (int i = 0; i < npc; i++) {
-            System.out.printf("Point %d: ", i + 1);
-            for (int j = 0; j < 4; j++) {
-                System.out.printf("N%d = %.4f ", j + 1, N[i][j]);
-            }
-            System.out.println();
-        }
     }
 }
