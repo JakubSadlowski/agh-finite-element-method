@@ -6,6 +6,7 @@ public class MatrixHbc {
     private final GlobalData globalData;
     private final Element element;
     private final Grid grid;
+    private final ElementUni elementUni;
 
     public MatrixHbc(GlobalData globalData, Element element, int numPoints) {
         this.numPoints = numPoints;
@@ -13,33 +14,39 @@ public class MatrixHbc {
         this.element = element;
         this.grid = globalData.getGrid();
         this.Hbc = new double[4][4];
+        this.elementUni = new ElementUni(numPoints); // Initialize ElementUni to provide transformation points
 
         calculateMatrixHbc();
     }
 
     private void calculateMatrixHbc() {
-        GaussQuadratureData gaussData = new GaussQuadratureData(numPoints);
-        double[] weights = gaussData.getWeights();
-        double[] nodes = gaussData.getNodes();
-        Surface surface = new Surface(numPoints);
+        double[] weights = new GaussQuadratureData(numPoints).getWeights();
+        double[] ksiEtaValues = elementUni.getKsiEtaValues();
 
-        // Process each surface of the element (4 surfaces for 2D element)
+        // Iterate through each surface of the element (4 surfaces for a 2D element)
         for (int surfaceIndex = 0; surfaceIndex < 4; surfaceIndex++) {
             Node[] surfaceNodes = getNodesForSurface(surfaceIndex);
 
-            // Only calculate if both nodes have boundary condition
+            // Only calculate if both nodes on the surface have boundary condition
             if (surfaceNodes[0].isBC() && surfaceNodes[1].isBC()) {
                 double detJ = calculateDetJ(surfaceNodes[0], surfaceNodes[1]);
 
+                // Iterate over integration points on the surface
                 for (int i = 0; i < numPoints; i++) {
-                    surface.calculateSurfaceShapeFunctions(nodes[i]);
-                    double[][] N = surface.getN();
+                    double point = ksiEtaValues[i];
+                    double[] transformedPoint = elementUni.getSurfaceTransformations().get(surfaceIndex).apply(point);
 
-                    // Calculate Hbc contribution for this integration point
+                    // xi and eta for this integration point
+                    double xi = transformedPoint[0];
+                    double eta = transformedPoint[1];
+
+                    // Calculate shape functions for the current surface
+                    double[] N = calculateSurfaceShapeFunctions(xi, eta);
+
+                    // Update the Hbc matrix
                     for (int j = 0; j < 4; j++) {
                         for (int k = 0; k < 4; k++) {
-                            Hbc[j][k] += globalData.getAlpha() * N[surfaceIndex][j] * N[surfaceIndex][k]
-                                    * weights[i] * detJ;
+                            Hbc[j][k] += globalData.getAlpha() * N[j] * N[k] * weights[i] * detJ;
                         }
                     }
                 }
@@ -84,7 +91,7 @@ public class MatrixHbc {
     }
 
     public void printResults() {
-        System.out.println("Matrix H:");
+        System.out.println("Matrix Hbc:");
         for (double[] row : Hbc) {
             System.out.print("|");
             for (double value : row) {

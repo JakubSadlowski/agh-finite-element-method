@@ -1,11 +1,17 @@
 package org.example;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
 public class ElementUni {
     private final double[] ksiEtaValues;
     private final double[][] dNdKsi;
     private final double[][] dNdEta;
     private final int npc;
     private final int numPoints;
+    private final List<Function<Double, double[]>> surfaceTransformations;
+    private final Surface surface;
 
     public ElementUni(int integrationPoints) {
         this.npc = integrationPoints * integrationPoints;
@@ -14,10 +20,13 @@ public class ElementUni {
         this.ksiEtaValues = gaussQuadratureData.getNodes();
         dNdKsi = new double[npc][4];
         dNdEta = new double[npc][4];
-        calculateShapeFunctionsAndDerivatives();
+        surface = new Surface(integrationPoints);
+        surfaceTransformations = initializeSurfaceTransformations();
+        calculateDerivatives();
+        calculateSurfaceValues();
     }
 
-    private void calculateShapeFunctionsAndDerivatives() {
+    private void calculateDerivatives() {
         for (int i = 0; i < numPoints; i++) {
             double eta = ksiEtaValues[i];
             for (int j = 0; j < numPoints; j++) {
@@ -32,6 +41,42 @@ public class ElementUni {
                 dNdEta[i * numPoints + j][1] = -0.25 * (1 + ksi);
                 dNdEta[i * numPoints + j][2] = 0.25 * (1 + ksi);
                 dNdEta[i * numPoints + j][3] = 0.25 * (1 - ksi);
+            }
+        }
+    }
+
+    private List<Function<Double, double[]>> initializeSurfaceTransformations() {
+        List<Function<Double, double[]>> transformations = new ArrayList<>();
+        // Transformation for the "down" surface
+        transformations.add(point -> new double[]{point, -1.0});
+        // Transformation for the "right" surface
+        transformations.add(point -> new double[]{1.0, point});
+        // Transformation for the "left" surface
+        transformations.add(point -> new double[]{-1.0, point});
+        // Transformation for the "up" surface
+        transformations.add(point -> new double[]{point, 1.0});
+        return transformations;
+    }
+
+    public void calculateSurfaceValues() {
+        for (int i = 0; i < surface.N[0].length; i++) {
+            Function<Double, double[]> transformation = surfaceTransformations.get(i);
+            for (int j = 0; j < numPoints; j++) {
+                double point = ksiEtaValues[j];
+                double[] transformedPoint = transformation.apply(point);
+
+                double xi = transformedPoint[0];
+                double eta = transformedPoint[1];
+
+                //double[] surfaceValues = new double[4];
+                surface.N[i][0] = 0.25 * (1 - xi) * (1 - eta);
+                surface.N[i][1] = 0.25 * (1 + xi) * (1 - eta);
+                surface.N[i][2] = 0.25 * (1 + xi) * (1 + eta);
+                surface.N[i][3] = 0.25 * (1 - xi) * (1 + eta);
+
+                /*// Output results for debugging
+                System.out.printf("Surface %d, Point %d -> xi: %.2f, eta: %.2f, Values: %s%n",
+                        i + 1, j + 1, xi, eta, java.util.Arrays.toString(surfaceValues));*/
             }
         }
     }
