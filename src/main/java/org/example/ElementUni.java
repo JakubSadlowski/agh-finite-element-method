@@ -89,6 +89,18 @@ public class ElementUni {
         return dNdKsi;
     }
 
+    public Surface getSurface() {
+        return surface;
+    }
+
+    public List<Function<Double, double[]>> getSurfaceTransformations() {
+        return surfaceTransformations;
+    }
+
+    public double[] getKsiEtaValues() {
+        return ksiEtaValues;
+    }
+
     public void printResults() {
         System.out.println("------------------------------------------------------------");
         System.out.println("| pc | dN1/dKsi   | dN2/dKsi   | dN3/dKsi   | dN4/dKsi   |");

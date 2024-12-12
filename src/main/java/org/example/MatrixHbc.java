@@ -14,7 +14,7 @@ public class MatrixHbc {
         this.element = element;
         this.grid = globalData.getGrid();
         this.Hbc = new double[4][4];
-        this.elementUni = new ElementUni(numPoints); // Initialize ElementUni to provide transformation points
+        this.elementUni = new ElementUni(numPoints);
 
         calculateMatrixHbc();
     }
@@ -41,7 +41,7 @@ public class MatrixHbc {
                     double eta = transformedPoint[1];
 
                     // Calculate shape functions for the current surface
-                    double[] N = calculateSurfaceShapeFunctions(xi, eta);
+                    double[] N = elementUni.getSurface().getN()[surfaceIndex];
 
                     // Update the Hbc matrix
                     for (int j = 0; j < 4; j++) {
