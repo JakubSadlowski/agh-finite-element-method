@@ -14,6 +14,7 @@ public class FileDataReader {
             String line;
             boolean readingNodes = false;
             boolean readingElements = false;
+            boolean readingBC = false;
             Node[] nodes = null;
             Element[] elements = null;
             int nodeIndex = 0;
@@ -21,11 +22,6 @@ public class FileDataReader {
 
             while ((line = br.readLine()) != null) {
                 String[] tokens = line.split("[,\\s]+");
-
-                if (line.startsWith("*BC") || line.startsWith("BC") || line.trim().isEmpty()) {
-                    readingElements = false;
-                    continue;
-                }
 
                 if (line.startsWith("SimulationTime")) {
                     globalData = new GlobalData(
@@ -94,6 +90,9 @@ public class FileDataReader {
                 } else if (line.startsWith("*Element")) {
                     readingNodes = false;
                     readingElements = true;
+                } else if (line.startsWith("*BC")) {
+                    readingElements = false;
+                    readingBC = true;
                 }
 
                 if (readingNodes && !line.startsWith("*Node")) {
@@ -120,6 +119,19 @@ public class FileDataReader {
                         elementIndex++;
                     } else {
                         throw new NullPointerException("Elements array is not initialized.");
+                    }
+                }
+
+                if (readingBC && nodes != null) {
+                    for (String token : tokens) {
+                        try {
+                            int nodeId = Integer.parseInt(token.trim());
+                            if (nodeId > 0 && nodeId <= nodes.length) {
+                                nodes[nodeId - 1].setBC(true);
+                            }
+                        } catch (NumberFormatException ignored) {
+                            // Skip non-numeric tokens
+                        }
                     }
                 }
             }
