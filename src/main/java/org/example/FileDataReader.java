@@ -122,15 +122,11 @@ public class FileDataReader {
                     }
                 }
 
-                if (readingBC && nodes != null) {
+                if (readingBC && !line.startsWith("*BC")) {
                     for (String token : tokens) {
-                        try {
-                            int nodeId = Integer.parseInt(token.trim());
-                            if (nodeId > 0 && nodeId <= nodes.length) {
-                                nodes[nodeId - 1].setBC(true);
-                            }
-                        } catch (NumberFormatException ignored) {
-                            // Skip non-numeric tokens
+                        int nodeId = Integer.parseInt(token.trim());
+                        if (nodeId > 0 && nodeId <= nodes.length) {
+                            nodes[nodeId - 1].setBC(true);
                         }
                     }
                 }
