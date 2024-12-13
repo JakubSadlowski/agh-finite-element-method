@@ -80,6 +80,15 @@ public class MatrixH {
         }
     }
 
+    public void addHbc(MatrixHbc matrixHbc) {
+        double[][] Hbc = matrixHbc.getHbc();
+        for (int i = 0; i < H.length; i++) {
+            for (int j = 0; j < H[i].length; j++) {
+                H[i][j] += Hbc[i][j];
+            }
+        }
+    }
+
     public void printMatrixHpc() {
         for (int p = 0; p < npc; p++) {
             System.out.println("Matrix Hpc" + (p + 1) + ":");

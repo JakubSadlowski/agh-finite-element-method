@@ -1,11 +1,17 @@
 package org.example;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
 public class ElementUni {
     private final double[] ksiEtaValues;
     private final double[][] dNdKsi;
     private final double[][] dNdEta;
     private final int npc;
     private final int numPoints;
+    private final List<Function<Double, double[]>> surfaceTransformations;
+    private final Surface surface;
 
     public ElementUni(int integrationPoints) {
         this.npc = integrationPoints * integrationPoints;
@@ -14,34 +20,89 @@ public class ElementUni {
         this.ksiEtaValues = gaussQuadratureData.getNodes();
         dNdKsi = new double[npc][4];
         dNdEta = new double[npc][4];
-        calculateShapeFunctionsAndDerivatives();
+        surface = new Surface(integrationPoints);
+        surfaceTransformations = initializeSurfaceTransformations();
+        calculateDerivatives();
+        calculateSurfaceValues();
     }
 
-    private void calculateShapeFunctionsAndDerivatives() {
+    private List<Function<Double, double[]>> initializeSurfaceTransformations() {
+        List<Function<Double, double[]>> transformations = new ArrayList<>();
+        // Bottom surface (eta = -1)
+        transformations.add(point -> new double[]{point, -1.0});
+        // Right surface (ksi = 1)
+        transformations.add(point -> new double[]{1.0, point});
+        // Top surface (eta = 1)
+        transformations.add(point -> new double[]{point, 1.0});
+        // Left surface (ksi = -1)
+        transformations.add(point -> new double[]{-1.0, point});
+        return transformations;
+    }
+
+    public double[] calculateShapeFunctions(double ksi, double eta) {
+        double[] N = new double[4];
+        N[0] = 0.25 * (1 - ksi) * (1 - eta);
+        N[1] = 0.25 * (1 + ksi) * (1 - eta);
+        N[2] = 0.25 * (1 + ksi) * (1 + eta);
+        N[3] = 0.25 * (1 - ksi) * (1 + eta);
+        return N;
+    }
+
+    public double[] getSurfaceShapeFunctions(int surfaceIndex, double point) {
+        double[] transformedPoint = surfaceTransformations.get(surfaceIndex).apply(point);
+        return calculateShapeFunctions(transformedPoint[0], transformedPoint[1]);
+    }
+
+    private void calculateDerivatives() {
         for (int i = 0; i < numPoints; i++) {
             double eta = ksiEtaValues[i];
             for (int j = 0; j < numPoints; j++) {
                 double ksi = ksiEtaValues[j];
+                int idx = i * numPoints + j;
 
-                dNdKsi[i * numPoints + j][0] = -0.25 * (1 - eta);
-                dNdKsi[i * numPoints + j][1] = 0.25 * (1 - eta);
-                dNdKsi[i * numPoints + j][2] = 0.25 * (1 + eta);
-                dNdKsi[i * numPoints + j][3] = -0.25 * (1 + eta);
+                dNdKsi[idx][0] = -0.25 * (1 - eta);
+                dNdKsi[idx][1] = 0.25 * (1 - eta);
+                dNdKsi[idx][2] = 0.25 * (1 + eta);
+                dNdKsi[idx][3] = -0.25 * (1 + eta);
 
-                dNdEta[i * numPoints + j][0] = -0.25 * (1 - ksi);
-                dNdEta[i * numPoints + j][1] = -0.25 * (1 + ksi);
-                dNdEta[i * numPoints + j][2] = 0.25 * (1 + ksi);
-                dNdEta[i * numPoints + j][3] = 0.25 * (1 - ksi);
+                dNdEta[idx][0] = -0.25 * (1 - ksi);
+                dNdEta[idx][1] = -0.25 * (1 + ksi);
+                dNdEta[idx][2] = 0.25 * (1 + ksi);
+                dNdEta[idx][3] = 0.25 * (1 - ksi);
             }
         }
+    }
+
+    private void calculateSurfaceValues() {
+        double[][] surfaceN = surface.getN();
+        for (int surfaceIndex = 0; surfaceIndex < 4; surfaceIndex++) {
+            for (int pointIndex = 0; pointIndex < numPoints; pointIndex++) {
+                double point = ksiEtaValues[pointIndex];
+                double[] N = getSurfaceShapeFunctions(surfaceIndex, point);
+                System.arraycopy(N, 0, surfaceN[pointIndex], 0, 4);
+            }
+        }
+    }
+
+
+    public double[] getKsiEtaValues() {
+        return ksiEtaValues;
+    }
+
+    public double[][] getdNdKsi() {
+        return dNdKsi;
     }
 
     public double[][] getdNdEta() {
         return dNdEta;
     }
 
-    public double[][] getdNdKsi() {
-        return dNdKsi;
+    public Surface getSurface() {
+        return surface;
+    }
+
+    public int getNumPoints() {
+        return numPoints;
     }
 
     public void printResults() {
