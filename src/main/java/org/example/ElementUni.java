@@ -68,15 +68,10 @@ public class ElementUni {
                 double xi = transformedPoint[0];
                 double eta = transformedPoint[1];
 
-                //double[] surfaceValues = new double[4];
-                surface.N[i][0] = 0.25 * (1 - xi) * (1 - eta);
-                surface.N[i][1] = 0.25 * (1 + xi) * (1 - eta);
-                surface.N[i][2] = 0.25 * (1 + xi) * (1 + eta);
-                surface.N[i][3] = 0.25 * (1 - xi) * (1 + eta);
-
-                /*// Output results for debugging
-                System.out.printf("Surface %d, Point %d -> xi: %.2f, eta: %.2f, Values: %s%n",
-                        i + 1, j + 1, xi, eta, java.util.Arrays.toString(surfaceValues));*/
+                surface.N[j][0] = 0.25 * (1 - xi) * (1 - eta);
+                surface.N[j][1] = 0.25 * (1 + xi) * (1 - eta);
+                surface.N[j][2] = 0.25 * (1 + xi) * (1 + eta);
+                surface.N[j][3] = 0.25 * (1 - xi) * (1 + eta);
             }
         }
     }
