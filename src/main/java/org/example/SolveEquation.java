@@ -23,6 +23,7 @@ public class SolveEquation {
             MatrixH matrixH = new MatrixH(integrationPoints, globalData, elementUni, jacobian);
             matrixH.addHbc(matrixHbc);
             matrixH.printMatrixH();
+            matrixHbc.printVectorP();
             //globalMatrixH.calculateGlobalMatrixH(element, matrixH.getH());
         }
 
