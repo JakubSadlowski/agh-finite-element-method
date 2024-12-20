@@ -2,9 +2,19 @@ package org.example;
 
 public class GlobalMatrixH {
     private final double[][] globalMatrixH;
+    private final double[] globalP;
 
     public GlobalMatrixH(GlobalData globalData) {
         globalMatrixH = new double[globalData.getnN()][globalData.getnN()];
+        globalP = new double[globalData.getnN()];
+    }
+
+    public double[][] getGlobalMatrixH() {
+        return globalMatrixH;
+    }
+
+    public double[] getGlobalP() {
+        return globalP;
     }
 
     public void calculateGlobalMatrixH(Element element, double[][] matrixH) {
@@ -19,6 +29,13 @@ public class GlobalMatrixH {
         }
     }
 
+    public void aggregateP(Element element, double[] localP) {
+        int[] nodeIDs = element.getElements();
+        for (int i = 0; i < nodeIDs.length; i++) {
+            globalP[nodeIDs[i] - 1] += localP[i];
+        }
+    }
+
     public void printGlobalMatrixH() {
         System.out.println("Global Matrix H:");
         for (double[] row : globalMatrixH) {
@@ -27,9 +44,5 @@ public class GlobalMatrixH {
             }
             System.out.println();
         }
-    }
-
-    public double[][] getGlobalMatrixH() {
-        return globalMatrixH;
     }
 }
