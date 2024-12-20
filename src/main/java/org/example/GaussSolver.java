@@ -20,7 +20,6 @@ public class GaussSolver {
         double[] b = globalP.clone();
 
         for (int i = 0; i < matrixSize - 1; i++) {
-            // Partial pivoting
             int maxRow = findPivotRow(A, i);
             if (maxRow != i) {
                 swapRows(A, b, i, maxRow);

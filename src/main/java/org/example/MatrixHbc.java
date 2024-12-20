@@ -18,7 +18,7 @@ public class MatrixHbc {
         this.P = new double[4];
         this.elementUni = new ElementUni(numPoints);
 
-        calculateMatrixHbc();
+        calculateMatrixHbcAndVectorP();
     }
 
     public double[][] getHbc() {
@@ -29,7 +29,7 @@ public class MatrixHbc {
         return P;
     }
 
-    private void calculateMatrixHbc() {
+    private void calculateMatrixHbcAndVectorP() {
         double[] weights = new GaussQuadratureData(numPoints).getWeights();
         double alpha = globalData.getAlpha();
 
