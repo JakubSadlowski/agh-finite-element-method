@@ -1,7 +1,8 @@
 package org.example;
 
 public class SolveEquation {
-    GlobalData globalData;
+    private GlobalData globalData;
+    private double[] vectorP;
 
     public SolveEquation(GlobalData globalData) {
         this.globalData = globalData;
@@ -9,7 +10,7 @@ public class SolveEquation {
 
     public void calculateResults(int integrationPoints) {
         Grid grid = globalData.getGrid();
-        //GlobalMatrixH globalMatrixH = new GlobalMatrixH(globalData);
+        GlobalMatrixH globalMatrixH = new GlobalMatrixH(globalData);
 
         ElementUni elementUni = new ElementUni(integrationPoints);
         //elementUni.printResults();
@@ -22,10 +23,17 @@ public class SolveEquation {
             //jacobian.printJacobians();
             MatrixH matrixH = new MatrixH(integrationPoints, globalData, elementUni, jacobian);
             matrixH.addHbc(matrixHbc);
-            matrixH.printMatrixH();
-            //globalMatrixH.calculateGlobalMatrixH(element, matrixH.getH());
+            vectorP = matrixHbc.getP();
+            //matrixH.printMatrixH();
+            //matrixHbc.printVectorP();
+            globalMatrixH.calculateGlobalMatrixH(element, matrixH.getH());
+            globalMatrixH.aggregateP(element, vectorP);
         }
 
         //globalMatrixH.printGlobalMatrixH();
+
+        GaussSolver solver = new GaussSolver(globalData, globalMatrixH, globalMatrixH.getGlobalP());
+        solver.solve();
+        solver.printResults();
     }
 }

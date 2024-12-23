@@ -2,6 +2,7 @@ package org.example;
 
 public class MatrixHbc {
     private final double[][] Hbc;
+    private final double[] P;
     private final GlobalData globalData;
     private final Element element;
     private final Grid grid;
@@ -14,12 +15,21 @@ public class MatrixHbc {
         this.grid = globalData.getGrid();
         this.numPoints = numPoints;
         this.Hbc = new double[4][4];
+        this.P = new double[4];
         this.elementUni = new ElementUni(numPoints);
 
-        calculateMatrixHbc();
+        calculateMatrixHbcAndVectorP();
     }
 
-    private void calculateMatrixHbc() {
+    public double[][] getHbc() {
+        return Hbc;
+    }
+
+    public double[] getP() {
+        return P;
+    }
+
+    private void calculateMatrixHbcAndVectorP() {
         double[] weights = new GaussQuadratureData(numPoints).getWeights();
         double alpha = globalData.getAlpha();
 
@@ -39,6 +49,9 @@ public class MatrixHbc {
                     for (int k = 0; k < 4; k++) {
                         Hbc[j][k] += alpha * N[j] * N[k] * weights[i] * detJ;
                     }
+
+                    double tot = globalData.getTot();
+                    P[j] += alpha * N[j] * weights[i] * detJ * tot;
                 }
             }
         }
@@ -75,7 +88,11 @@ public class MatrixHbc {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    public double[][] getHbc() {
-        return Hbc;
+    public void printVectorP() {
+        System.out.println("Vector P:");
+        for (double value : P) {
+            System.out.printf("| %8.5f ", value);
+        }
+        System.out.println("|");
     }
 }
