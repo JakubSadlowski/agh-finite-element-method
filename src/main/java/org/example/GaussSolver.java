@@ -15,6 +15,14 @@ public class GaussSolver {
         this.temperatures = new double[matrixSize];
     }
 
+    public GaussSolver(GlobalData globalData, double[][] matrix, double[] vector) {
+        this.globalData = globalData;
+        this.matrixSize = globalData.getnN();
+        this.globalMatrixH = matrix;
+        this.globalP = vector;
+        this.temperatures = new double[matrixSize];
+    }
+
     public double[] solve() {
         double[][] A = copyMatrix(globalMatrixH);
         double[] b = globalP.clone();
