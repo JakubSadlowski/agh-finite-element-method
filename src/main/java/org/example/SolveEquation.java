@@ -14,7 +14,6 @@ public class SolveEquation {
         this.t1 = new double[numberOfNodes];
         this.time = 0.0;
 
-        // Initialize with initial temperature
         double initialTemp = globalData.getInitialTemp();
         for (int i = 0; i < numberOfNodes; i++) {
             t0[i] = initialTemp;
@@ -35,10 +34,8 @@ public class SolveEquation {
         double deltaT = globalData.getSimulationStepTime();
         int timeSteps = (int) (simulationTime / deltaT);
 
-        // Print initial state
         printTimeStepResults();
 
-        // Time stepping loop
         for (int step = 0; step < timeSteps; step++) {
             time += deltaT;
 
@@ -60,11 +57,9 @@ public class SolveEquation {
                 }
             }
 
-            // Solve system of equations
             GaussSolver solver = new GaussSolver(globalData, leftSide, rightSide);
             t1 = solver.solve();
 
-            // Print results at this time step
             printTimeStepResults();
 
             // Update t0 for next iteration
@@ -100,16 +95,15 @@ public class SolveEquation {
     private void printTimeStepResults() {
         System.out.printf("SIMULATION TIME: %.4f s\n", time);
 
-        // Print temperatures in groups of 4
         for (int i = 0; i < t1.length; i += 4) {
             StringBuilder line = new StringBuilder();
             for (int j = 0; j < 4 && (i + j) < t1.length; j++) {
-                line.append(String.format("T[%d] = %.4f    ", i + j, t1[i + j]));
+                line.append(String.format("%.4f |   ", t1[i + j]));
             }
             System.out.println(line.toString().trim());
         }
 
-        // Find min and max temperatures
+        // Min and max temperatures
         double minTemp = t1[0];
         double maxTemp = t1[0];
         for (int i = 1; i < t1.length; i++) {
