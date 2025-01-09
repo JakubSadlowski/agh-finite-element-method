@@ -21,35 +21,6 @@ public class SolveEquation {
         }
     }
 
-    private void printHeader() {
-        System.out.printf("SIMULATION DURATION: %.4fs\n", globalData.getSimulationTime());
-        System.out.printf("SIMULATION TIME STEP : %.4fs\n\n", globalData.getSimulationStepTime());
-    }
-
-    private void printTimeStepResults() {
-        System.out.printf("SIMULATION TIME: %.4f s\n", time);
-
-        // Print temperatures in groups of 4
-        for (int i = 0; i < t1.length; i += 4) {
-            StringBuilder line = new StringBuilder();
-            for (int j = 0; j < 4 && (i + j) < t1.length; j++) {
-                line.append(String.format("T[%d] = %.4f    ", i + j, t1[i + j]));
-            }
-            System.out.println(line.toString().trim());
-        }
-
-        // Find min and max temperatures
-        double minTemp = t1[0];
-        double maxTemp = t1[0];
-        for (int i = 1; i < t1.length; i++) {
-            minTemp = Math.min(minTemp, t1[i]);
-            maxTemp = Math.max(maxTemp, t1[i]);
-        }
-
-        System.out.printf("Max temperature this step: %.4f\n", maxTemp);
-        System.out.printf("Min temperature this step: %.4f\n\n", minTemp);
-    }
-
     public void calculateResults(int integrationPoints) {
         printHeader();
 
@@ -110,6 +81,7 @@ public class SolveEquation {
             MatrixHbc matrixHbc = new MatrixHbc(globalData, element, integrationPoints);
             MatrixH matrixH = new MatrixH(integrationPoints, globalData, elementUni, jacobian);
             MatrixC matrixC = new MatrixC(integrationPoints, globalData, elementUni, jacobian);
+            matrixC.printMatrixC();
 
             matrixH.addHbc(matrixHbc);
             vectorP = matrixHbc.getP();
@@ -118,5 +90,34 @@ public class SolveEquation {
             globalMatrixC.calculateGlobalMatrixC(element, matrixC.getC());
             globalMatrixH.aggregateP(element, vectorP);
         }
+    }
+
+    private void printHeader() {
+        System.out.printf("SIMULATION DURATION: %.4fs\n", globalData.getSimulationTime());
+        System.out.printf("SIMULATION TIME STEP : %.4fs\n\n", globalData.getSimulationStepTime());
+    }
+
+    private void printTimeStepResults() {
+        System.out.printf("SIMULATION TIME: %.4f s\n", time);
+
+        // Print temperatures in groups of 4
+        for (int i = 0; i < t1.length; i += 4) {
+            StringBuilder line = new StringBuilder();
+            for (int j = 0; j < 4 && (i + j) < t1.length; j++) {
+                line.append(String.format("T[%d] = %.4f    ", i + j, t1[i + j]));
+            }
+            System.out.println(line.toString().trim());
+        }
+
+        // Find min and max temperatures
+        double minTemp = t1[0];
+        double maxTemp = t1[0];
+        for (int i = 1; i < t1.length; i++) {
+            minTemp = Math.min(minTemp, t1[i]);
+            maxTemp = Math.max(maxTemp, t1[i]);
+        }
+
+        System.out.printf("Max temperature this step: %.4f\n", maxTemp);
+        System.out.printf("Min temperature this step: %.4f\n\n", minTemp);
     }
 }
