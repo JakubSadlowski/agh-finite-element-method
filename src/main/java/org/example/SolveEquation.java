@@ -43,8 +43,7 @@ public class SolveEquation {
             double[][] leftSide = new double[globalData.getnN()][globalData.getnN()];
             for (int i = 0; i < globalData.getnN(); i++) {
                 for (int j = 0; j < globalData.getnN(); j++) {
-                    leftSide[i][j] = globalMatrixH.getGlobalMatrixH()[i][j] +
-                        globalMatrixC.getGlobalMatrixC()[i][j] / deltaT;
+                    leftSide[i][j] = globalMatrixH.getGlobalMatrixH()[i][j] + globalMatrixC.getGlobalMatrixC()[i][j] / deltaT;
                 }
             }
 
@@ -67,8 +66,7 @@ public class SolveEquation {
         }
     }
 
-    private void calculateGlobalMatrices(Grid grid, GlobalMatrixH globalMatrixH,
-        GlobalMatrixC globalMatrixC, int integrationPoints) {
+    private void calculateGlobalMatrices(Grid grid, GlobalMatrixH globalMatrixH, GlobalMatrixC globalMatrixC, int integrationPoints) {
         ElementUni elementUni = new ElementUni(integrationPoints);
 
         for (Element element : grid.getElements()) {
@@ -100,7 +98,8 @@ public class SolveEquation {
             for (int j = 0; j < 4 && (i + j) < t1.length; j++) {
                 line.append(String.format("%.4f |   ", t1[i + j]));
             }
-            System.out.println(line.toString().trim());
+            System.out.println(line.toString()
+                .trim());
         }
 
         // Min and max temperatures
