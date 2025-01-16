@@ -110,13 +110,26 @@ public class FileDataReader {
                 if (readingElements && !line.startsWith("*Element")) {
                     int elementID = Integer.parseInt(tokens[1]);
                     int[] ids = new int[4];
-                    ids[0] = Integer.parseInt(tokens[2]);
-                    ids[1] = Integer.parseInt(tokens[3]);
-                    ids[2] = Integer.parseInt(tokens[4]);
-                    ids[3] = Integer.parseInt(tokens[5]);
-                    if (elements != null){
-                        elements[elementIndex] = new Element(ids, elementID);
-                        elementIndex++;
+
+                    // Sprawdzamy format danych wejściowych
+                    int startIndex = (tokens[0].isEmpty()) ? 1 : 0;  // Obsługa różnych formatów plików
+
+                    // Odczytujemy ID węzłów z odpowiednich pozycji
+                    for (int i = 0; i < 4; i++) {
+                        try {
+                            ids[i] = Integer.parseInt(tokens[startIndex + i + 1]);
+                        } catch (NumberFormatException e) {
+                            throw new IllegalArgumentException("Invalid node ID format at element " + elementID);
+                        }
+                    }
+
+                    if (elements != null) {
+                        if (elementIndex < elements.length) {
+                            elements[elementIndex] = new Element(ids, elementID);
+                            elementIndex++;
+                        } else {
+                            throw new IllegalArgumentException("Too many elements in input file. Expected " + elements.length + " elements.");
+                        }
                     } else {
                         throw new NullPointerException("Elements array is not initialized.");
                     }
