@@ -7,11 +7,11 @@ public class GaussSolver {
     private final double[] temperatures;
     private final int matrixSize;
 
-    public GaussSolver(GlobalData globalData, GlobalMatrixH globalMatrixH, double[] globalP) {
+    public GaussSolver(GlobalData globalData, double[][] matrix, double[] vector) {
         this.globalData = globalData;
         this.matrixSize = globalData.getnN();
-        this.globalMatrixH = globalMatrixH.getGlobalMatrixH();
-        this.globalP = globalP;
+        this.globalMatrixH = matrix;
+        this.globalP = vector;
         this.temperatures = new double[matrixSize];
     }
 

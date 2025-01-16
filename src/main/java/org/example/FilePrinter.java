@@ -2,8 +2,9 @@ package org.example;
 
 public class FilePrinter {
 
+    private FilePrinter() {}
+
      public static void printFromFile(GlobalData globalData){
-         /*
          System.out.println("SimulationTime: " + globalData.getSimulationTime());
          System.out.println("SimulationStepTime: " + globalData.getSimulationStepTime());
          System.out.println("Conductivity: " + globalData.getConductivity());
@@ -14,7 +15,6 @@ public class FilePrinter {
          System.out.println("SpecificHeat: " + globalData.getSpecificHeat());
          System.out.println("Nodes number: " + globalData.getnN());
          System.out.println("Elements number: " + globalData.getnE());
-          */
 
          Grid grid = globalData.getGrid();
          System.out.println("\nNodes:");
