@@ -22,26 +22,26 @@ public class Jacobian {
         calculateJacobians();
     }
 
-    public double[][] getJ(int pointIndex) {
-        return J[pointIndex];
-    }
-
-    public double[][][] getJ1() {
-        return J1;
-    }
-
-    public double[] getDetJ() {
-        return detJ;
-    }
-
     private void calculateJacobians() {
         Node[] nodes = globalData.getGrid().getNodes();
         Element[] elements = globalData.getGrid().getElements();
+
+        if (currentElementID <= 0 || currentElementID > elements.length) {
+            throw new IllegalArgumentException("Invalid element ID: " + currentElementID);
+        }
+
         int[] currentElement = elements[currentElementID - 1].getElements();
 
         for (int p = 0; p < npc; p++) {
-            for (int i = 0; i < elements[currentElementID - 1].getElements().length; i++) {
+            J[p] = new double[][]{{0.0, 0.0}, {0.0, 0.0}};
+
+            for (int i = 0; i < currentElement.length; i++) {
+                // Sprawdzamy czy węzeł istnieje
                 int currentNodeID = currentElement[i];
+                if (currentNodeID <= 0 || currentNodeID > nodes.length) {
+                    throw new IllegalArgumentException("Invalid node ID: " + currentNodeID);
+                }
+
                 double x = nodes[currentNodeID - 1].getX();
                 double y = nodes[currentNodeID - 1].getY();
 
@@ -56,46 +56,36 @@ public class Jacobian {
         }
     }
 
+    // Pozostałe metody pozostają bez zmian...
+    public double[][] getJ(int pointIndex) {
+        if (pointIndex < 0 || pointIndex >= npc) {
+            throw new IllegalArgumentException("Invalid point index: " + pointIndex);
+        }
+        return J[pointIndex];
+    }
+
+    public double[][][] getJ1() {
+        return J1;
+    }
+
+    public double[] getDetJ() {
+        return detJ;
+    }
+
     private double calculateDetJ(double[][] jacobianMatrix) {
         return jacobianMatrix[0][0] * jacobianMatrix[1][1] - jacobianMatrix[0][1] * jacobianMatrix[1][0];
     }
 
     private double[][] invertJacobian(double[][] jacobianMatrix, double detJ) {
-        double[][] inverse = new double[2][2];
+        if (Math.abs(detJ) < 1e-10) {
+            throw new IllegalStateException("Jacobian determinant is too close to zero: " + detJ);
+        }
 
+        double[][] inverse = new double[2][2];
         inverse[0][0] = jacobianMatrix[1][1] / detJ;
         inverse[0][1] = -jacobianMatrix[0][1] / detJ;
         inverse[1][0] = -jacobianMatrix[1][0] / detJ;
         inverse[1][1] = jacobianMatrix[0][0] / detJ;
-
         return inverse;
     }
-
-    public void printJacobians() {
-        for (int p = 0; p < npc; p++) {
-            System.out.println("Integration Point " + (p + 1) + ":");
-            System.out.println("Jacobian Matrix J:");
-            printMatrix(J[p]);
-
-            System.out.println("Determinant detJ: " + detJ[p]);
-
-            System.out.println("Inverse Jacobian Matrix J1:");
-            printMatrix(J1[p]);
-            System.out.println();
-        }
-    }
-
-    private void printMatrix(double[][] matrix) {
-        for (double[] row : matrix) {
-            System.out.print("[");
-            for (int i = 0; i < row.length; i++) {
-                System.out.printf("%.5f", row[i]);
-                if (i < row.length - 1) {
-                    System.out.print(" ");
-                }
-            }
-            System.out.println("]");
-        }
-    }
-
 }

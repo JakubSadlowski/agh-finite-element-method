@@ -59,9 +59,9 @@ public class SolveEquation {
             GaussSolver solver = new GaussSolver(globalData, leftSide, rightSide);
             t1 = solver.solve();
 
-            printTimeStepResults();
+            //printTimeStepResults();
+            printMinMaxTemperatures();
 
-            // Update t0 for next iteration
             System.arraycopy(t1, 0, t0, 0, t0.length);
         }
     }
@@ -74,7 +74,7 @@ public class SolveEquation {
             MatrixHbc matrixHbc = new MatrixHbc(globalData, element, integrationPoints);
             MatrixH matrixH = new MatrixH(integrationPoints, globalData, elementUni, jacobian);
             MatrixC matrixC = new MatrixC(integrationPoints, globalData, elementUni, jacobian);
-            matrixC.printMatrixC();
+            //matrixC.printMatrixC();
 
             matrixH.addHbc(matrixHbc);
             vectorP = matrixHbc.getP();
@@ -110,7 +110,19 @@ public class SolveEquation {
             maxTemp = Math.max(maxTemp, t1[i]);
         }
 
-        System.out.printf("Max temperature this step: %.4f\n", maxTemp);
-        System.out.printf("Min temperature this step: %.4f\n\n", minTemp);
+        System.out.printf("Max temperature this step: %.14f\n", maxTemp);
+        System.out.printf("Min temperature this step: %.14f\n\n", minTemp);
+    }
+
+    private void printMinMaxTemperatures() {
+        // Min and max temperatures
+        double minTemp = t1[0];
+        double maxTemp = t1[0];
+        for (int i = 1; i < t1.length; i++) {
+            minTemp = Math.min(minTemp, t1[i]);
+            maxTemp = Math.max(maxTemp, t1[i]);
+        }
+
+        System.out.printf("%.14f\t%.14f\n", minTemp, maxTemp);
     }
 }

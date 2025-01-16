@@ -21,70 +21,34 @@ public class FileDataReader {
             int elementIndex = 0;
 
             while ((line = br.readLine()) != null) {
-                String[] tokens = line.split("[,\\s]+");
+                String[] tokens = line.trim().split("[,\\s]+");
 
                 if (line.startsWith("SimulationTime")) {
                     globalData = new GlobalData(
-                            Double.parseDouble(tokens[1]), 0, 0, 0, 0, 0, 0, 0, 0, 0
+                        Double.parseDouble(tokens[1]), 0, 0, 0, 0, 0, 0, 0, 0, 0
                     );
                 } else if (line.startsWith("SimulationStepTime")) {
-                    if (globalData != null){
-                        globalData.setSimulationStepTime(Double.parseDouble(tokens[1]));
-                    } else {
-                        throw new NullPointerException("GlobalData is not initialized.");
-                    }
+                    globalData.setSimulationStepTime(Double.parseDouble(tokens[1]));
                 } else if (line.startsWith("Conductivity")) {
-                    if (globalData != null){
-                        globalData.setConductivity(Double.parseDouble(tokens[1]));
-                    } else {
-                        throw new NullPointerException("GlobalData is not initialized.");
-                    }
+                    globalData.setConductivity(Double.parseDouble(tokens[1]));
                 } else if (line.startsWith("Alfa")) {
-                    if (globalData != null){
-                        globalData.setAlpha(Double.parseDouble(tokens[1]));
-                    } else {
-                        throw new NullPointerException("GlobalData is not initialized.");
-                    }
+                    globalData.setAlpha(Double.parseDouble(tokens[1]));
                 } else if (line.startsWith("Tot")) {
-                    if (globalData != null){
-                        globalData.setTot(Double.parseDouble(tokens[1]));
-                    } else {
-                        throw new NullPointerException("GlobalData is not initialized.");
-                    }
+                    globalData.setTot(Double.parseDouble(tokens[1]));
                 } else if (line.startsWith("InitialTemp")) {
-                    if (globalData != null){
-                        globalData.setInitialTemp(Double.parseDouble(tokens[1]));
-                    } else {
-                        throw new NullPointerException("GlobalData is not initialized.");
-                    }
+                    globalData.setInitialTemp(Double.parseDouble(tokens[1]));
                 } else if (line.startsWith("Density")) {
-                    if (globalData != null){
-                        globalData.setDensity(Double.parseDouble(tokens[1]));
-                    } else {
-                        throw new NullPointerException("GlobalData is not initialized.");
-                    }
+                    globalData.setDensity(Double.parseDouble(tokens[1]));
                 } else if (line.startsWith("SpecificHeat")) {
-                    if (globalData != null){
-                        globalData.setSpecificHeat(Double.parseDouble(tokens[1]));
-                    } else {
-                        throw new NullPointerException("GlobalData is not initialized.");
-                    }
+                    globalData.setSpecificHeat(Double.parseDouble(tokens[1]));
                 } else if (line.startsWith("Nodes number")) {
                     int nN = Integer.parseInt(tokens[2]);
-                    if (globalData != null){
-                        globalData.setnN(nN);
-                        nodes = new Node[nN];
-                    } else{
-                        throw new NullPointerException("GlobalData is not initialized.");
-                    }
+                    globalData.setnN(nN);
+                    nodes = new Node[nN];
                 } else if (line.startsWith("Elements number")) {
                     int nE = Integer.parseInt(tokens[2]);
-                    if (globalData != null){
-                        globalData.setnE(nE);
-                        elements = new Element[nE];
-                    } else {
-                        throw new NullPointerException("GlobalData is not initialized.");
-                    }
+                    globalData.setnE(nE);
+                    elements = new Element[nE];
                 } else if (line.startsWith("*Node")) {
                     readingNodes = true;
                 } else if (line.startsWith("*Element")) {
@@ -96,57 +60,60 @@ public class FileDataReader {
                 }
 
                 if (readingNodes && !line.startsWith("*Node")) {
-                    int nodeID = Integer.parseInt(tokens[1]);
-                    double x = Double.parseDouble(tokens[2]);
-                    double y = Double.parseDouble(tokens[3]);
-                    if (nodes != null){
-                        nodes[nodeIndex] = new Node(x, y, nodeID);
-                        nodeIndex++;
-                    } else {
-                        throw new NullPointerException("Nodes array is not initialized.");
+                    try {
+                        int nodeID = Integer.parseInt(tokens[0]);
+                        double x = Double.parseDouble(tokens[1]);
+                        double y = Double.parseDouble(tokens[2]);
+                        nodes[nodeIndex++] = new Node(x, y, nodeID);
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException("Error parsing node data: " + line, e);
                     }
                 }
 
                 if (readingElements && !line.startsWith("*Element")) {
-                    int elementID = Integer.parseInt(tokens[1]);
-                    int[] ids = new int[4];
-                    ids[0] = Integer.parseInt(tokens[2]);
-                    ids[1] = Integer.parseInt(tokens[3]);
-                    ids[2] = Integer.parseInt(tokens[4]);
-                    ids[3] = Integer.parseInt(tokens[5]);
-                    if (elements != null){
-                        elements[elementIndex] = new Element(ids, elementID);
-                        elementIndex++;
-                    } else {
-                        throw new NullPointerException("Elements array is not initialized.");
+                    try {
+                        int elementID = Integer.parseInt(tokens[0]);
+                        int[] ids = new int[4];
+                        for (int i = 0; i < 4; i++) {
+                            ids[i] = Integer.parseInt(tokens[i + 1]);
+                        }
+                        elements[elementIndex++] = new Element(ids, elementID);
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException("Error parsing element data: " + line, e);
                     }
                 }
 
                 if (readingBC && !line.startsWith("*BC")) {
                     for (String token : tokens) {
-                        int nodeId = Integer.parseInt(token.trim());
-                        if (nodeId > 0 && nodeId <= nodes.length) {
-                            nodes[nodeId - 1].setBC(true);
+                        try {
+                            int nodeId = Integer.parseInt(token.trim());
+                            if (nodeId > 0 && nodeId <= nodes.length) {
+                                nodes[nodeId - 1].setBC(true);
+                            } else {
+                                throw new IllegalArgumentException("Invalid BC node ID: " + nodeId);
+                            }
+                        } catch (NumberFormatException e) {
+                            throw new IllegalArgumentException("Error parsing BC data: " + line, e);
                         }
                     }
                 }
             }
 
-            if (globalData != null){
+            if (globalData != null) {
                 grid = new Grid(globalData.getnN(), globalData.getnE());
                 grid.setNodes(nodes);
                 grid.setElements(elements);
                 globalData.setGrid(grid);
             } else {
-                throw new NullPointerException("GlobalData is not initialized.");
+                throw new IllegalStateException("GlobalData was not initialized.");
             }
 
         } catch (IOException e) {
-            System.err.println("File could not be read properly.");
+            System.err.println("File could not be read: " + e.getMessage());
             e.printStackTrace();
-
-        } catch (NullPointerException npe) {
-            System.err.println("Error: " + npe.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error processing file: " + e.getMessage());
+            e.printStackTrace();
         }
 
         return globalData;
