@@ -11,6 +11,6 @@ public class Main {
         GlobalData globalData = readFile(filePath3);
         //printFromFile(globalData);
         SolveEquation solveEquation = new SolveEquation(globalData);
-        solveEquation.calculateResults(2);
+        solveEquation.calculateResults(4);
     }
 }
